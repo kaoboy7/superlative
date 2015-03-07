@@ -14,35 +14,34 @@ import java.util.ArrayList;
 
 
 public class QuestionActivity extends ActionBarActivity {
-    QuestionsDao questionsDao = new QuestionsDao();
+    private QuestionsDao questionsDao;
+    private Intent oldIntent;
+    private int questionsLeft;
 
-    public void sendMessage(View view) {
-        Intent oldIntent = getIntent();
-        int questionsLeft;
-        questionsLeft = oldIntent.getIntExtra(MainActivity.QUESTIONS_LEFT, 0);
+    public void nextQuestion(View view) {
         ArrayList<String> answers = oldIntent.getStringArrayListExtra(MainActivity.ANSWERS);
 
         // Get radio button value
         RadioGroup playersGroup = (RadioGroup) findViewById(R.id.radioGroupPlayers);
+
+        // Add answers to solution
         if (playersGroup.getCheckedRadioButtonId() != -1) {
+
             int id = playersGroup.getCheckedRadioButtonId();
             View radioButton = playersGroup.findViewById(id);
             int radioId = playersGroup.indexOfChild(radioButton);
             RadioButton btn = (RadioButton) playersGroup.getChildAt(radioId);
             String selection = (String) btn.getText();
-
             TextView textView = (TextView) findViewById(R.id.textView);
-
             String answer = textView.getText() + ": " + selection;
             answers.add(answer);
         }
 
-
         Intent intent = new Intent(this, QuestionActivity.class);
-//        EditText editText = (EditText) findViewById(R.id.edit_message);
-//        String message = editText.getText().toString();
         intent.putExtra(MainActivity.QUESTIONS_LEFT, questionsLeft - 1);
         intent.putStringArrayListExtra(MainActivity.ANSWERS, answers);
+        intent.putStringArrayListExtra(MainActivity.QUESTIONS, oldIntent.getStringArrayListExtra(MainActivity.QUESTIONS));
+
 
         if (questionsLeft > 0) {
             startActivity(intent);
@@ -60,14 +59,18 @@ public class QuestionActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        oldIntent = getIntent();
+        questionsLeft = oldIntent.getIntExtra(MainActivity.QUESTIONS_LEFT, 0);
+
+
         super.onCreate(savedInstanceState);
+        questionsDao = new QuestionsDao(this);
         setContentView(R.layout.activity_question);
 
         TextView textView = (TextView) findViewById(R.id.textView);
-        textView.setText(questionsDao.getQuestion());
+//        textView.setText(questionsDao.getQuestion());
 
-
-
+        textView.setText(oldIntent.getStringArrayListExtra(MainActivity.QUESTIONS).get(questionsLeft));
     }
 
 

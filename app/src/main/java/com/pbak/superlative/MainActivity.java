@@ -14,14 +14,22 @@ public class MainActivity extends ActionBarActivity {
     public final static String EXTRA_MESSAGE = "key";
     public final static String QUESTIONS_LEFT = "questions_left";
     public final static String ANSWERS = "answers";
+    public final static String QUESTIONS = "questions";
+    public final static int QUESTIONS_IN_GAME = 4;
+    private QuestionsDao questionsDao;
 
-    public void sendMessage(View view) {
+    public void startGame(View view) {
         Intent intent = new Intent(this, QuestionActivity.class);
 //        EditText editText = (EditText) findViewById(R.id.edit_message);
 //        String message = editText.getText().toString();
+
+        // Get answers
+        ArrayList<String> questions = questionsDao.getNQuestions(4);
+
         intent.putExtra(EXTRA_MESSAGE, "Wrong Answer!");
-        intent.putExtra(QUESTIONS_LEFT, 3);
+        intent.putExtra(QUESTIONS_LEFT, QUESTIONS_IN_GAME - 1);
         intent.putStringArrayListExtra(ANSWERS, new ArrayList<String>());
+        intent.putStringArrayListExtra(QUESTIONS, questions);
         startActivity(intent);
         finish();
     }
@@ -29,11 +37,12 @@ public class MainActivity extends ActionBarActivity {
     public void onRadioButtonClicked(View view) {
 
     }
-ata
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        questionsDao = new QuestionsDao(this);
     }
 
 
