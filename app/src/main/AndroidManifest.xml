@@ -22,7 +22,15 @@
         </activity>
         <activity
             android:name=".QuestionActivity"
-            android:label="Questions!">
+            android:label="Questions!" >
+        </activity>
+        <activity
+            android:name=".AddPlayersActivity"
+            android:label="@string/title_activity_add_players" >
+        </activity>
+        <activity
+            android:name=".ViewResultsActivity"
+            android:label="@string/title_activity_view_results" >
         </activity>
     </application>
 

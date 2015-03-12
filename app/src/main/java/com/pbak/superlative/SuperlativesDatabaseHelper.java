@@ -21,10 +21,10 @@ public class SuperlativesDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "DatabaseHelper";
 
-    private static String DB_PATH="/data/data/com.pbak.superlative/databases/";
-    private static String DB_NAME="superlatives.db";
-    private static String DATABASE_NAME="superlatives.db";
-    private static int DATABASE_VERSION=1;
+    private static String DB_PATH = "/data/data/com.pbak.superlative/databases/";
+    private static String DB_NAME = "superlatives.db";
+    private static String DATABASE_NAME = "superlatives.db";
+    private static int DATABASE_VERSION = 1;
 
 
     private SQLiteDatabase myDataBase;
@@ -44,23 +44,21 @@ public class SuperlativesDatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-
     /**
      * Creates a empty database on the system and rewrites it with your own database.
-     * */
+     */
     public void createDataBase() throws IOException {
 
         boolean dbExist = checkDataBase();
 
-        if(dbExist){
+        if (dbExist) {
 
             Log.w(TAG, "Db exists!");
-
             Log.w(TAG, "Trying to copy database");
             this.getReadableDatabase();
-            copyDataBase();
+//            copyDataBase();
             //do nothing - database already exist
-        }else{
+        } else {
 
             Log.w(TAG, "Db does not exists!");
             //By calling this method and empty database will be created into the default system path
@@ -83,25 +81,26 @@ public class SuperlativesDatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Check if the database already exist to avoid re-copying the file each time you open the application.
+     *
      * @return true if it exists, false if it doesn't
      */
-    private boolean checkDataBase(){
+    private boolean checkDataBase() {
 
         SQLiteDatabase checkDB = null;
 
-        try{
+        try {
             String myPath = DB_PATH + DB_NAME;
             checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
 
             Log.w(TAG, "Db exists! in checkDataBaseS");
-        }catch(SQLiteException e){
+        } catch (SQLiteException e) {
 
             Log.w(TAG, "Db does not exist yet! in checkDataBaseS");
             //database does't exist yet.
 
         }
 
-        if(checkDB != null){
+        if (checkDB != null) {
 
             checkDB.close();
 
@@ -114,18 +113,17 @@ public class SuperlativesDatabaseHelper extends SQLiteOpenHelper {
      * Copies your database from your local assets-folder to the just created empty database in the
      * system folder, from where it can be accessed and handled.
      * This is done by transfering bytestream.
-     * */
-    private void copyDataBase() throws IOException{
+     */
+    private void copyDataBase() throws IOException {
 
         //Open your local db as the input stream
         Log.w(TAG, "Trying to get assets");
-        InputStream myInput = myContext.getAssets().open("ex1.db");
+        InputStream myInput = myContext.getAssets().open(DATABASE_NAME);
 
 
 //        InputStream myInput = myContext.getAssets().open(DB_NAME);
 
         Log.w(TAG, "Finished getting assets");
-
 
 
         // Path to the just created empty db
@@ -139,7 +137,7 @@ public class SuperlativesDatabaseHelper extends SQLiteOpenHelper {
         //transfer bytes from the inputfile to the outputfile
         byte[] buffer = new byte[1024];
         int length;
-        while ((length = myInput.read(buffer))>0){
+        while ((length = myInput.read(buffer)) > 0) {
             myOutput.write(buffer, 0, length);
         }
 
@@ -161,7 +159,7 @@ public class SuperlativesDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public synchronized void close() {
 
-        if(myDataBase != null)
+        if (myDataBase != null)
             myDataBase.close();
 
         super.close();

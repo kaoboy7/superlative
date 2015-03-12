@@ -17,14 +17,16 @@ public class QuestionActivity extends ActionBarActivity {
     private QuestionsDao questionsDao;
     private Intent oldIntent;
     private int questionsLeft;
+    private long surveyQuestionId;
 
     public void nextQuestion(View view) {
         ArrayList<String> answers = oldIntent.getStringArrayListExtra(MainActivity.ANSWERS);
+        Long surveyId = getIntent().getLongExtra(MainActivity.GAME_ID, 0);
 
-        // Get radio button value
+        // 1. Get radio button value
         RadioGroup playersGroup = (RadioGroup) findViewById(R.id.radioGroupPlayers);
 
-        // Add answers to solution
+        // 2. Add answers to solution
         if (playersGroup.getCheckedRadioButtonId() != -1) {
 
             int id = playersGroup.getCheckedRadioButtonId();
@@ -35,9 +37,13 @@ public class QuestionActivity extends ActionBarActivity {
             TextView textView = (TextView) findViewById(R.id.textView);
             String answer = textView.getText() + ": " + selection;
             answers.add(answer);
+
+            // 3. add answers to database
+            questionsDao.incrementSurveyAnswers(surveyQuestionId, selection);
         }
 
         Intent intent = new Intent(this, QuestionActivity.class);
+        intent.putExtras(getIntent());
         intent.putExtra(MainActivity.QUESTIONS_LEFT, questionsLeft - 1);
         intent.putStringArrayListExtra(MainActivity.ANSWERS, answers);
         intent.putStringArrayListExtra(MainActivity.QUESTIONS, oldIntent.getStringArrayListExtra(MainActivity.QUESTIONS));
@@ -48,7 +54,10 @@ public class QuestionActivity extends ActionBarActivity {
         } else {
             Intent endIntent = new Intent(this, DisplayMessageActivity.class);
             endIntent.putStringArrayListExtra(MainActivity.ANSWERS, answers);
-            startActivity(endIntent);
+            //startActivity(endIntent);
+
+            Intent mainIntent = new Intent(this, MainActivity.class);
+            startActivity(mainIntent);
         }
         finish();
     }
@@ -68,9 +77,27 @@ public class QuestionActivity extends ActionBarActivity {
         setContentView(R.layout.activity_question);
 
         TextView textView = (TextView) findViewById(R.id.textView);
-//        textView.setText(questionsDao.getQuestion());
 
+        // Getting the question in the list
         textView.setText(oldIntent.getStringArrayListExtra(MainActivity.QUESTIONS).get(questionsLeft));
+
+        surveyQuestionId = oldIntent.getIntegerArrayListExtra(MainActivity.QUESTION_IDS_KEY).get(questionsLeft);
+
+        // Need to get ID of specific survey
+//        ArrayList<SurveyQuestion> surveyQuestions = (ArrayList<SurveyQuestion>) getIntent().getSerializableExtra(MainActivity.EXISTING_SURVEY_KEY);
+//        SurveyQuestion surveyQuestion = surveyQuestions.get(questionsLeft);
+//        surveyQuestionId = surveyQuestion.getId();
+
+
+        // Add radio button players
+        ArrayList<String> players = getIntent().getStringArrayListExtra(MainActivity.PLAYERS_KEY);
+        RadioGroup radioGroupPlayers = (RadioGroup) findViewById(R.id.radioGroupPlayers);
+
+        for (String player : players) {
+            RadioButton radioButtonPlayer = new RadioButton(this);
+            radioButtonPlayer.setText(player);
+            radioGroupPlayers.addView(radioButtonPlayer);
+        }
     }
 
 

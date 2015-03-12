@@ -30,17 +30,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical">
-        <RadioButton android:id="@+id/personAlex"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Alex"
-            android:onClick="onRadioButtonClicked"/>
-        <RadioButton android:id="@+id/personPurujit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Purujit"
-            android:onClick="onRadioButtonClicked"/>
-
     </RadioGroup>
 
     <Button
